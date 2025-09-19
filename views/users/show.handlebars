@@ -1,0 +1,87 @@
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow mb-4">
+            <div class="card-body text-center">
+                <div class="user-avatar mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                    {{substring user.name 0 1}}
+                </div>
+                <h4 class="card-title">{{user.name}}</h4>
+                <p class="text-muted">@{{user.username}}</p>
+                <p class="text-muted">
+                    <i class="fas fa-envelope me-1"></i>{{user.email}}
+                </p>
+                <p class="text-muted">
+                    <i class="fas fa-calendar me-1"></i>
+                    Membro desde {{formatDate user.createdAt}}
+                </p>
+                {{#if isOwnProfile}}
+                <a href="/users/edit" class="btn btn-primary">
+                    <i class="fas fa-cog me-2"></i>Editar Perfil
+                </a>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-newspaper me-2"></i>Postagens de {{user.name}} ({{user.posts.length}})
+                </h5>
+            </div>
+            <div class="card-body">
+                {{#if user.posts}}
+                <div class="list-group list-group-flush">
+                    {{#each user.posts}}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">{{title}}</h6>
+                                <p class="mb-1 text-muted">{{truncate content 150}}</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{formatDate createdAt}}
+                                </small>
+                            </div>
+                            <div class="ms-3">
+                                <a href="/posts/{{id}}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye me-1"></i>Ver
+                                </a>
+                                {{#if ../isOwnProfile}}
+                                <a href="/posts/{{id}}/edit" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-edit me-1"></i>Editar
+                                </a>
+                                {{/if}}
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                {{else}}
+                <div class="text-center py-4">
+                    <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">
+                        {{#if isOwnProfile}}
+                            Você ainda não criou nenhuma postagem.
+                        {{else}}
+                            {{user.name}} ainda não criou nenhuma postagem.
+                        {{/if}}
+                    </p>
+                    {{#if isOwnProfile}}
+                    <a href="/posts/create" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Criar Primeira Postagem
+                    </a>
+                    {{/if}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a href="/users" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Voltar para Usuários
+    </a>
+</div>

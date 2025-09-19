@@ -1,0 +1,84 @@
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">{{post.title}}</h4>
+                    <small>
+                        <i class="fas fa-calendar me-1"></i>
+                        {{formatDate post.createdAt}}
+                    </small>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="user-avatar me-3">
+                        {{#if post.user}}
+                            {{substring post.user.name 0 1}}
+                        {{else}}
+                            ?
+                        {{/if}}
+                    </div>
+                    <div>
+                        <h6 class="mb-0">
+                            {{#if post.user}}
+                                {{post.user.name}}
+                            {{else}}
+                                Usuário removido
+                            {{/if}}
+                        </h6>
+                        <small class="text-muted">
+                            {{#if post.user}}
+                                @{{post.user.username}}
+                            {{else}}
+                                Usuário não disponível
+                            {{/if}}
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="post-content">
+                    <p class="lead">{{post.content}}</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>
+                            Criado em {{formatDate post.createdAt}}
+                            {{#if post.updatedAt}}
+                                <span class="ms-2">
+                                    <i class="fas fa-edit me-1"></i>
+                                    Atualizado em {{formatDate post.updatedAt}}
+                                </span>
+                            {{/if}}
+                        </small>
+                    </div>
+                    
+                    {{#if user}}
+                        {{#if (eq post.userId user.id)}}
+                        <div>
+                            <a href="/posts/{{post.id}}/edit" class="btn btn-outline-primary btn-sm me-2">
+                                <i class="fas fa-edit me-1"></i>Editar
+                            </a>
+                            <form action="/posts/{{post.id}}?_method=DELETE" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                        onclick="return confirm('Tem certeza que deseja deletar esta postagem?')">
+                                    <i class="fas fa-trash me-1"></i>Deletar
+                                </button>
+                            </form>
+                        </div>
+                        {{/if}}
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="/posts" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Voltar para Postagens
+            </a>
+        </div>
+    </div>
+</div>

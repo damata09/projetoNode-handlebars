@@ -1,0 +1,40 @@
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">
+                    <i class="fas fa-edit me-2"></i>Editar Postagem
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form action="/posts/{{post.id}}?_method=PUT" method="POST">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">
+                            <i class="fas fa-heading me-1"></i>Título
+                        </label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               value="{{post.title}}" required maxlength="200">
+                        <div class="form-text">Título da sua postagem (máximo 200 caracteres).</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="content" class="form-label">
+                            <i class="fas fa-align-left me-1"></i>Conteúdo
+                        </label>
+                        <textarea class="form-control" id="content" name="content" rows="10" required>{{post.content}}</textarea>
+                        <div class="form-text">Conteúdo da sua postagem. Seja criativo e compartilhe suas ideias!</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="/posts/{{post.id}}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-save me-2"></i>Salvar Alterações
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
