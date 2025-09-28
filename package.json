@@ -1,25 +1,36 @@
 {
-  "name": "sistema-postagens-usuarios",
+  "name": "devpoints",
   "version": "1.0.0",
-  "description": "Sistema de postagens e usuários com Node.js e Handlebars",
+  "description": "Sistema de pontos e postagens para desenvolvedores com Node.js e Handlebars",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "db:migrate": "node scripts/migrate.js"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "connect-flash": "^0.1.1",
     "express": "^4.18.2",
     "express-handlebars": "^7.1.2",
     "express-session": "^1.17.3",
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.2",
     "method-override": "^3.0.0",
-    "connect-flash": "^0.1.1"
+    "multer": "^2.0.2",
+    "sequelize": "^6.35.0",
+    "sqlite3": "^5.1.6"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
   },
-  "keywords": ["node", "express", "handlebars", "postagens", "usuarios"],
+  "keywords": [
+    "node",
+    "express",
+    "handlebars",
+    "devpoints",
+    "desenvolvedores",
+    "pontos"
+  ],
   "author": "",
   "license": "MIT"
 }

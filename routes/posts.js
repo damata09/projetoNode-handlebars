@@ -4,16 +4,15 @@ const { requireAuth } = require('./auth');
 const { users, posts } = require('../data/storage');
 
 // Listar todas as postagens
-router.get('/', (req, res) => {
-  const postsWithUsers = posts.map(post => {
-    const user = users.find(u => u.id === post.userId);
-    return {
-      ...post,
-      user: user ? { name: user.name, username: user.username } : null
-    };
-  }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-  res.render('posts/index', { posts: postsWithUsers });
+router.get('/', async (req, res) => {
+  try {
+    const allPosts = await posts.findAll({ isPublished: true });
+    res.render('posts/index', { posts: allPosts, user: req.session.user });
+  } catch (error) {
+    console.error('Erro ao carregar posts:', error);
+    req.flash('error_msg', 'Erro ao carregar postagens');
+    res.render('posts/index', { posts: [], user: req.session.user });
+  }
 });
 
 // Página para criar nova postagem
@@ -22,114 +21,144 @@ router.get('/create', requireAuth, (req, res) => {
 });
 
 // Criar nova postagem
-router.post('/create', requireAuth, (req, res) => {
-  const { title, content } = req.body;
+router.post('/create', requireAuth, async (req, res) => {
+  try {
+    const { title, content, category, tags } = req.body;
 
-  if (!title || !content) {
-    req.flash('error_msg', 'Título e conteúdo são obrigatórios');
-    return res.redirect('/posts/create');
+    if (!title || !content) {
+      req.flash('error_msg', 'Título e conteúdo são obrigatórios');
+      return res.redirect('/posts/create');
+    }
+
+    const newPost = await posts.create({
+      title,
+      content,
+      category: category || 'geral',
+      tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+      userId: req.session.user.id,
+      isPublished: true
+    });
+
+    // Adicionar pontos ao usuário
+    await users.addPoints(req.session.user.id, 10);
+
+    req.flash('success_msg', 'Postagem criada com sucesso! Você ganhou 10 pontos!');
+    res.redirect('/posts');
+  } catch (error) {
+    console.error('Erro ao criar post:', error);
+    req.flash('error_msg', 'Erro ao criar postagem');
+    res.redirect('/posts/create');
   }
-
-  const newPost = {
-    id: Date.now().toString(),
-    title,
-    content,
-    userId: req.session.user.id,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  };
-
-  posts.push(newPost);
-  req.flash('success_msg', 'Postagem criada com sucesso!');
-  res.redirect('/posts');
 });
 
 // Visualizar postagem individual
-router.get('/:id', (req, res) => {
-  const post = posts.find(p => p.id === req.params.id);
-  
-  if (!post) {
-    req.flash('error_msg', 'Postagem não encontrada');
-    return res.redirect('/posts');
+router.get('/:id', async (req, res) => {
+  try {
+    const post = await posts.findById(req.params.id);
+    
+    if (!post) {
+      req.flash('error_msg', 'Postagem não encontrada');
+      return res.redirect('/posts');
+    }
+
+    // Incrementar visualizações
+    await posts.incrementViews(post.id);
+
+    res.render('posts/show', { post, user: req.session.user });
+  } catch (error) {
+    console.error('Erro ao carregar post:', error);
+    req.flash('error_msg', 'Erro ao carregar postagem');
+    res.redirect('/posts');
   }
-
-  const user = users.find(u => u.id === post.userId);
-  const postWithUser = {
-    ...post,
-    user: user ? { name: user.name, username: user.username } : null
-  };
-
-  res.render('posts/show', { post: postWithUser });
 });
 
 // Página para editar postagem
-router.get('/:id/edit', requireAuth, (req, res) => {
-  const post = posts.find(p => p.id === req.params.id);
-  
-  if (!post) {
-    req.flash('error_msg', 'Postagem não encontrada');
-    return res.redirect('/posts');
-  }
+router.get('/:id/edit', requireAuth, async (req, res) => {
+  try {
+    const post = await posts.findById(req.params.id);
+    
+    if (!post) {
+      req.flash('error_msg', 'Postagem não encontrada');
+      return res.redirect('/posts');
+    }
 
-  // Verificar se o usuário é o dono da postagem
-  if (post.userId !== req.session.user.id) {
-    req.flash('error_msg', 'Você não tem permissão para editar esta postagem');
-    return res.redirect('/posts');
-  }
+    // Verificar se o usuário é o dono da postagem
+    if (post.userId !== req.session.user.id) {
+      req.flash('error_msg', 'Você não tem permissão para editar esta postagem');
+      return res.redirect('/posts');
+    }
 
-  res.render('posts/edit', { post });
+    res.render('posts/edit', { post, user: req.session.user });
+  } catch (error) {
+    console.error('Erro ao carregar post para edição:', error);
+    req.flash('error_msg', 'Erro ao carregar postagem');
+    res.redirect('/posts');
+  }
 });
 
 // Atualizar postagem
-router.put('/:id', requireAuth, (req, res) => {
-  const post = posts.find(p => p.id === req.params.id);
-  
-  if (!post) {
-    req.flash('error_msg', 'Postagem não encontrada');
-    return res.redirect('/posts');
+router.put('/:id', requireAuth, async (req, res) => {
+  try {
+    const post = await posts.findById(req.params.id);
+    
+    if (!post) {
+      req.flash('error_msg', 'Postagem não encontrada');
+      return res.redirect('/posts');
+    }
+
+    // Verificar se o usuário é o dono da postagem
+    if (post.userId !== req.session.user.id) {
+      req.flash('error_msg', 'Você não tem permissão para editar esta postagem');
+      return res.redirect('/posts');
+    }
+
+    const { title, content, category, tags } = req.body;
+
+    if (!title || !content) {
+      req.flash('error_msg', 'Título e conteúdo são obrigatórios');
+      return res.redirect(`/posts/${post.id}/edit`);
+    }
+
+    await posts.update(post.id, {
+      title,
+      content,
+      category: category || 'geral',
+      tags: tags ? tags.split(',').map(tag => tag.trim()) : []
+    });
+
+    req.flash('success_msg', 'Postagem atualizada com sucesso!');
+    res.redirect(`/posts/${post.id}`);
+  } catch (error) {
+    console.error('Erro ao atualizar post:', error);
+    req.flash('error_msg', 'Erro ao atualizar postagem');
+    res.redirect('/posts');
   }
-
-  // Verificar se o usuário é o dono da postagem
-  if (post.userId !== req.session.user.id) {
-    req.flash('error_msg', 'Você não tem permissão para editar esta postagem');
-    return res.redirect('/posts');
-  }
-
-  const { title, content } = req.body;
-
-  if (!title || !content) {
-    req.flash('error_msg', 'Título e conteúdo são obrigatórios');
-    return res.redirect(`/posts/${post.id}/edit`);
-  }
-
-  post.title = title;
-  post.content = content;
-  post.updatedAt = new Date();
-
-  req.flash('success_msg', 'Postagem atualizada com sucesso!');
-  res.redirect(`/posts/${post.id}`);
 });
 
 // Deletar postagem
-router.delete('/:id', requireAuth, (req, res) => {
-  const postIndex = posts.findIndex(p => p.id === req.params.id);
-  
-  if (postIndex === -1) {
-    req.flash('error_msg', 'Postagem não encontrada');
-    return res.redirect('/posts');
+router.delete('/:id', requireAuth, async (req, res) => {
+  try {
+    const post = await posts.findById(req.params.id);
+    
+    if (!post) {
+      req.flash('error_msg', 'Postagem não encontrada');
+      return res.redirect('/posts');
+    }
+
+    // Verificar se o usuário é o dono da postagem
+    if (post.userId !== req.session.user.id) {
+      req.flash('error_msg', 'Você não tem permissão para deletar esta postagem');
+      return res.redirect('/posts');
+    }
+
+    await posts.delete(post.id);
+    req.flash('success_msg', 'Postagem deletada com sucesso!');
+    res.redirect('/posts');
+  } catch (error) {
+    console.error('Erro ao deletar post:', error);
+    req.flash('error_msg', 'Erro ao deletar postagem');
+    res.redirect('/posts');
   }
-
-  const post = posts[postIndex];
-
-  // Verificar se o usuário é o dono da postagem
-  if (post.userId !== req.session.user.id) {
-    req.flash('error_msg', 'Você não tem permissão para deletar esta postagem');
-    return res.redirect('/posts');
-  }
-
-  posts.splice(postIndex, 1);
-  req.flash('success_msg', 'Postagem deletada com sucesso!');
-  res.redirect('/posts');
 });
 
 module.exports = router;

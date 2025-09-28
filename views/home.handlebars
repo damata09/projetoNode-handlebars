@@ -1,79 +1,167 @@
-<div class="row">
-    <div class="col-12">
-        <div class="jumbotron bg-primary text-white p-5 rounded mb-4">
-            <h1 class="display-4">
-                <i class="fas fa-blog me-3"></i>Bem-vindo ao Sistema de Postagens
-            </h1>
-            <p class="lead">Compartilhe suas ideias, experiências e conhecimentos com outros usuários.</p>
-            {{#unless user}}
-            <hr class="my-4">
-            <p>Faça login ou registre-se para começar a postar!</p>
-            <a class="btn btn-light btn-lg me-3" href="/login" role="button">
-                <i class="fas fa-sign-in-alt me-2"></i>Fazer Login
-            </a>
-            <a class="btn btn-outline-light btn-lg" href="/register" role="button">
-                <i class="fas fa-user-plus me-2"></i>Registrar-se
-            </a>
-            {{/unless}}
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-12">
-        <h2 class="mb-4">
-            <i class="fas fa-fire me-2"></i>Postagens Recentes
-        </h2>
-    </div>
-</div>
-
-{{#if posts}}
-<div class="row">
-    {{#each posts}}
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card post-card h-100">
-            <div class="card-body">
-                <h5 class="card-title">{{title}}</h5>
-                <p class="card-text">{{truncate content 100}}</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">
-                        <i class="fas fa-user me-1"></i>
-                        {{#if user}}
-                            {{user.name}}
-                        {{else}}
-                            Usuário removido
-                        {{/if}}
-                    </small>
-                    <small class="text-muted">
-                        <i class="fas fa-calendar me-1"></i>
-                        {{formatDate createdAt}}
-                    </small>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-8 mx-auto text-center">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <i class="fas fa-code me-3"></i>DevPoints
+                    </h1>
+                    <p class="hero-subtitle">
+                        A plataforma onde desenvolvedores compartilham conhecimento, ganham pontos e crescem juntos na comunidade tech.
+                    </p>
+                    {{#unless user}}
+                    <div class="hero-actions">
+                        <a class="btn btn-modern btn-lg me-3" href="/login" role="button">
+                            <i class="fas fa-sign-in-alt me-2"></i>Fazer Login
+                        </a>
+                        <a class="btn btn-outline-modern btn-lg" href="/register" role="button">
+                            <i class="fas fa-user-plus me-2"></i>Registrar-se
+                        </a>
+                    </div>
+                    {{else}}
+                    <div class="hero-actions">
+                        <a class="btn btn-modern btn-lg me-3" href="/posts/create" role="button">
+                            <i class="fas fa-plus me-2"></i>Nova Postagem
+                        </a>
+                        <a class="btn btn-outline-modern btn-lg" href="/posts" role="button">
+                            <i class="fas fa-list me-2"></i>Ver Posts
+                        </a>
+                    </div>
+                    {{/unless}}
                 </div>
             </div>
-            <div class="card-footer bg-transparent">
-                <a href="/posts/{{id}}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-eye me-1"></i>Ver Postagem
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="display-5 fw-bold mb-3" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                    Por que escolher o DevPoints?
+                </h2>
+                <p class="lead text-secondary">Uma plataforma completa para desenvolvedores</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card card-modern h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-trophy fa-3x" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                        </div>
+                        <h5 class="card-title">Sistema de Pontos</h5>
+                        <p class="card-text text-secondary">Ganhe pontos por suas contribuições e suba no ranking da comunidade.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-modern h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-code-branch fa-3x" style="background: var(--gradient-secondary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                        </div>
+                        <h5 class="card-title">Categorias Tech</h5>
+                        <p class="card-text text-secondary">Organize seus posts por tecnologia: JavaScript, Python, React e muito mais.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-modern h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-users fa-3x" style="background: var(--gradient-accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                        </div>
+                        <h5 class="card-title">Comunidade Ativa</h5>
+                        <p class="card-text text-secondary">Conecte-se com outros desenvolvedores e compartilhe conhecimento.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Posts Section -->
+<section class="py-5" style="background: rgba(15, 23, 42, 0.5);">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h2 class="display-6 fw-bold mb-3" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                    <i class="fas fa-fire me-2"></i>Postagens Recentes
+                </h2>
+                <p class="lead text-secondary">Últimas contribuições da comunidade</p>
+            </div>
+        </div>
+
+        {{#if posts}}
+        <div class="row g-4">
+            {{#each posts}}
+            <div class="col-md-6 col-lg-4">
+                <div class="card post-card h-100">
+                    <div class="card-body p-4">
+                        <div class="post-category">{{category}}</div>
+                        <h5 class="post-title">{{title}}</h5>
+                        <p class="post-content">{{truncate content 120}}</p>
+                        <div class="post-meta">
+                            <div class="post-author">
+                                <div class="user-avatar" style="width: 24px; height: 24px; font-size: 0.8rem;">
+                                    {{substring (if user user.name "U") 0 1}}
+                                </div>
+                                {{#if user}}
+                                    {{user.name}}
+                                {{else}}
+                                    Usuário removido
+                                {{/if}}
+                            </div>
+                            <div class="post-stats">
+                                <div class="post-stat">
+                                    <i class="fas fa-eye"></i>
+                                    {{views}}
+                                </div>
+                                <div class="post-stat">
+                                    <i class="fas fa-heart"></i>
+                                    {{likes}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 p-4 pt-0">
+                        <a href="/posts/{{id}}" class="btn btn-modern w-100">
+                            <i class="fas fa-eye me-2"></i>Ver Postagem
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <a href="/posts" class="btn btn-outline-modern btn-lg">
+                    <i class="fas fa-list me-2"></i>Ver Todas as Postagens
                 </a>
             </div>
         </div>
-    </div>
-    {{/each}}
-</div>
-
-<div class="row mt-4">
-    <div class="col-12 text-center">
-        <a href="/posts" class="btn btn-outline-primary btn-lg">
-            <i class="fas fa-list me-2"></i>Ver Todas as Postagens
-        </a>
-    </div>
-</div>
-{{else}}
-<div class="row">
-    <div class="col-12">
-        <div class="alert alert-info text-center">
-            <i class="fas fa-info-circle me-2"></i>
-            Nenhuma postagem encontrada. Seja o primeiro a postar!
+        {{else}}
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-modern text-center">
+                    <div class="card-body p-5">
+                        <i class="fas fa-info-circle fa-3x mb-3" style="color: var(--primary-cyan);"></i>
+                        <h5 class="card-title">Nenhuma postagem encontrada</h5>
+                        <p class="card-text text-secondary">Seja o primeiro a compartilhar conhecimento na comunidade!</p>
+                        {{#if user}}
+                        <a href="/posts/create" class="btn btn-modern">
+                            <i class="fas fa-plus me-2"></i>Criar Primeira Postagem
+                        </a>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
         </div>
+        {{/if}}
     </div>
-</div>
-{{/if}}
+</section>

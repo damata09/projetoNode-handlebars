@@ -1,48 +1,224 @@
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-header bg-info text-white">
-                <h4 class="mb-0">
-                    <i class="fas fa-user-edit me-2"></i>Editar Perfil
-                </h4>
-            </div>
-            <div class="card-body p-4">
-                <form action="/users/edit" method="POST">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">
-                            <i class="fas fa-user me-1"></i>Nome Completo
-                        </label>
-                        <input type="text" class="form-control" id="name" name="name" 
-                               value="{{user.name}}" required>
+<!-- Edit Profile Section -->
+<section class="py-5 min-vh-100">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Profile Header -->
+                <div class="text-center mb-5">
+                    <h1 class="display-6 fw-bold gradient-text mb-3">
+                        <i class="fas fa-user-edit me-2"></i>Editar Perfil
+                    </h1>
+                    <p class="lead text-secondary">Atualize suas informações e personalize seu perfil</p>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Avatar Upload -->
+                    <div class="col-md-4">
+                        <div class="card card-modern">
+                            <div class="card-header text-center py-4" style="background: var(--gradient-primary); border: none;">
+                                <h5 class="mb-0 text-white">
+                                    <i class="fas fa-camera me-2"></i>Foto de Perfil
+                                </h5>
+                            </div>
+                            <div class="card-body p-4 text-center">
+                                <div class="profile-avatar-container mb-4">
+                                    {{#if user.avatar}}
+                                        <img src="{{user.avatar}}" alt="Avatar" class="profile-avatar">
+                                    {{else}}
+                                        <div class="profile-avatar-placeholder">
+                                            {{substring user.name 0 1}}
+                                        </div>
+                                    {{/if}}
+                                </div>
+                                <form action="/users/upload-avatar" method="POST" enctype="multipart/form-data">
+                                    <div class="mb-3">
+                                        <input type="file" class="form-control-modern" id="avatar" name="avatar" accept="image/*" required>
+                                        <div class="form-text text-secondary">PNG, JPG ou GIF até 5MB</div>
+                                    </div>
+                                    <button type="submit" class="btn btn-modern w-100">
+                                        <i class="fas fa-upload me-2"></i>Alterar Foto
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="email" class="form-label">
-                            <i class="fas fa-envelope me-1"></i>Email
-                        </label>
-                        <input type="email" class="form-control" id="email" name="email" 
-                               value="{{user.email}}" required>
+
+                    <!-- Profile Form -->
+                    <div class="col-md-8">
+                        <div class="card card-modern">
+                            <div class="card-header text-center py-4" style="background: var(--gradient-secondary); border: none;">
+                                <h5 class="mb-0 text-white">
+                                    <i class="fas fa-user-cog me-2"></i>Informações Pessoais
+                                </h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <form action="/users/edit" method="POST">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <label for="name" class="form-label-modern">
+                                                <i class="fas fa-user me-2"></i>Nome Completo
+                                            </label>
+                                            <input type="text" class="form-control-modern" id="name" name="name" 
+                                                   value="{{user.name}}" placeholder="Seu nome completo" required>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-4">
+                                            <label for="email" class="form-label-modern">
+                                                <i class="fas fa-envelope me-2"></i>Email
+                                            </label>
+                                            <input type="email" class="form-control-modern" id="email" name="email" 
+                                                   value="{{user.email}}" placeholder="seu@email.com" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label for="username" class="form-label-modern">
+                                            <i class="fas fa-at me-2"></i>Nome de Usuário
+                                        </label>
+                                        <input type="text" class="form-control-modern" id="username" name="username" 
+                                               value="{{user.username}}" placeholder="seu_usuario" required>
+                                        <div class="form-text text-secondary">Este é seu nome de usuário único no sistema.</div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="bio" class="form-label-modern">
+                                            <i class="fas fa-quote-left me-2"></i>Biografia
+                                        </label>
+                                        <textarea class="form-control-modern" id="bio" name="bio" rows="3" 
+                                                  placeholder="Conte um pouco sobre você...">{{user.bio}}</textarea>
+                                        <div class="form-text text-secondary">Uma breve descrição sobre você (opcional).</div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <label for="github" class="form-label-modern">
+                                                <i class="fab fa-github me-2"></i>GitHub
+                                            </label>
+                                            <input type="url" class="form-control-modern" id="github" name="github" 
+                                                   value="{{user.github}}" placeholder="https://github.com/seu_usuario">
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-4">
+                                            <label for="linkedin" class="form-label-modern">
+                                                <i class="fab fa-linkedin me-2"></i>LinkedIn
+                                            </label>
+                                            <input type="url" class="form-control-modern" id="linkedin" name="linkedin" 
+                                                   value="{{user.linkedin}}" placeholder="https://linkedin.com/in/seu_perfil">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between gap-3">
+                                        <a href="/users/profile" class="btn btn-outline-modern flex-fill">
+                                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                                        </a>
+                                        <button type="submit" class="btn btn-modern flex-fill">
+                                            <i class="fas fa-save me-2"></i>Salvar Alterações
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="username" class="form-label">
-                            <i class="fas fa-at me-1"></i>Nome de Usuário
-                        </label>
-                        <input type="text" class="form-control" id="username" name="username" 
-                               value="{{user.username}}" required>
-                        <div class="form-text">Este é seu nome de usuário único no sistema.</div>
+                </div>
+
+                <!-- Account Stats -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card card-modern">
+                            <div class="card-header text-center py-4" style="background: var(--gradient-accent); border: none;">
+                                <h5 class="mb-0 text-white">
+                                    <i class="fas fa-chart-line me-2"></i>Estatísticas da Conta
+                                </h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row text-center">
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <i class="fas fa-trophy fa-2x mb-2" style="color: var(--primary-purple);"></i>
+                                            <h6 class="fw-bold">{{#if user.points}}{{user.points}}{{else}}0{{/if}}</h6>
+                                            <small class="text-secondary">Pontos</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <i class="fas fa-calendar fa-2x mb-2" style="color: var(--primary-green);"></i>
+                                            <h6 class="fw-bold">{{formatDate user.createdAt}}</h6>
+                                            <small class="text-secondary">Membro desde</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <i class="fas fa-clock fa-2x mb-2" style="color: var(--primary-cyan);"></i>
+                                            <h6 class="fw-bold">{{formatDate user.updatedAt}}</h6>
+                                            <small class="text-secondary">Última atualização</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <i class="fas fa-shield-alt fa-2x mb-2" style="color: var(--primary-pink);"></i>
+                                            <h6 class="fw-bold">Ativo</h6>
+                                            <small class="text-secondary">Status</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="d-flex justify-content-between">
-                        <a href="/users/profile" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Cancelar
-                        </a>
-                        <button type="submit" class="btn btn-info">
-                            <i class="fas fa-save me-2"></i>Salvar Alterações
-                        </button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<style>
+.profile-avatar-container {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--primary-purple);
+    box-shadow: var(--shadow-glow);
+    transition: all 0.3s ease;
+}
+
+.profile-avatar-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    border: 4px solid var(--primary-purple);
+    box-shadow: var(--shadow-glow);
+    transition: all 0.3s ease;
+}
+
+.stat-item {
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    background: var(--bg-darker);
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-item i {
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover i {
+    transform: scale(1.1);
+}
+</style>
