@@ -23,7 +23,7 @@ Sistema de pontos e postagens para desenvolvedores com Node.js, Express, Handleb
 
 1. Clone o repositório:
 ```bash
-git clone <url-do-repositorio>
+git clone (https://github.com/damata09/projetoNode-handlebars)
 cd devpoints
 ```
 
